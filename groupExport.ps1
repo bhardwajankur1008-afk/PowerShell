@@ -131,19 +131,19 @@ $exportBtn.Font = 'Microsoft Sans Serif,12,style=Bold,Italic'
 
 $whrMskd = New-Object system.Windows.Forms.MaskedTextBox
 $whrMskd.multiline = $false
-$whrMskd.text = "Where to save files ???"
+$whrMskd.text = "Where to save files ?"
 $whrMskd.width = 325
 $whrMskd.height = 26
 $whrMskd.location = New-Object System.Drawing.Point(7, 115)
-$whrMskd.Font = 'Microsoft Sans Serif,10,style=Bold,Italic'
+$whrMskd.Font = 'Microsoft Sans Serif,10,style=Bold'
 $whrMskd.ForeColor = "#000000"
 
-$statusLbl                       = New-Object system.Windows.Forms.Label
-$statusLbl.AutoSize              = $false
-$statusLbl.width                 = 100
-$statusLbl.height                = 19
-$statusLbl.location              = New-Object System.Drawing.Point(119,173)
-$statusLbl.Font                  = 'Microsoft Sans Serif,10,style=Bold'
+$statusLbl = New-Object system.Windows.Forms.Label
+$statusLbl.AutoSize = $false
+$statusLbl.width = 160
+$statusLbl.height = 19
+$statusLbl.location = New-Object System.Drawing.Point(119, 173)
+$statusLbl.Font = 'Microsoft Sans Serif,10,style=Bold'
 
 $groupExport.controls.AddRange(@($loginGroupBox, $exportGroupbox))
 $loginGroupBox.controls.AddRange(@($labelAdmin, $labelPwd, $loginBtn, $aboutBtn, $txtboxAdmin, $txtboxPwd))
@@ -160,47 +160,65 @@ Created by 'Ankur' in his free time.", "About the author...")
 }
 
 function connect-o365 {
-    # connecting to office 365 
-    $password = ConvertTo-SecureString -String ($txtboxPwd.Text) -AsPlainText -Force
-    $c = new-object -typename System.Management.Automation.PSCredential -argumentlist $txtboxAdmin.Text, $password
-    $s = New-PSSession -ConfigurationName Microsoft.exchange -ConnectionUri https://outlook.office365.com/PowerShell/liveid -Credential $c -Authentication Basic -AllowRedirection
-    Import-PSSession $s -DisableNameChecking -AllowClobber
-    Connect-MsolService -Credential $c
-    $statusLbl.text = "Connected!"
+
+    try {
+        # connecting to office 365 
+        $password = ConvertTo-SecureString -String ($txtboxPwd.Text) -AsPlainText -Force
+        $c = new-object -typename System.Management.Automation.PSCredential -argumentlist $txtboxAdmin.Text, $password
+        $s = New-PSSession -ConfigurationName Microsoft.exchange -ConnectionUri https://outlook.office365.com/PowerShell/liveid -Credential $c -Authentication Basic -AllowRedirection
+        Import-PSSession $s -DisableNameChecking -AllowClobber
+        Connect-MsolService -Credential $c
+        $statusLbl.text = "Connected"
+    }
+    catch {
+        [system.windows.forms.messagebox]::show("Something went wrong, check network or userName and password", "Erro...")
+    }
+    
 }
 
 function export-data {
-    # check the checkbox whether enabled or not
-    [string]$whrMskd.Text = $whrMskd.Text
-    $statusLbl.Text = "Generating files!"
-    
 
-    # export dl
-    if ($dlChkbox.Checked -eq $true) {
-        Get-DistributionGroup -ResultSize unlimited | Select-Object DisplayName, EmailAddresses | Export-Csv -Path ($whrMskd.Text + "distribution.csv") -NoTypeInformation
-    }
-    
-    # export security group
-    if ($securityChkbox.Checked -eq $true) {
-        Get-MsolGroup -MaxResults 1000 | Where-Object { $_.GroupType -eq "Security" } | Select-Object DisplayName | Export-Csv -Path ($whrMskd.Text + "SecurityGroup.csv") -NoTypeInformation
+    begin {
+        if ($whrMskd.Text -eq "Where to save files ?") {
+            [System.Windows.Forms.MessageBox]::show("Please check the path and try again !", "Error in path...")
+        }
+        else {
+            [string]$whrMskd.Text = $whrMskd.Text
+            $statusLbl.Text = "Files generating..."
+        }
     }
 
-    # export office365 group
-    if ($officeChkbox.Checked -eq $true) {
-        Get-UnifiedGroup -ResultSize unlimited | Select-Object DisplayName, PrimarySmtpAddress | export-csv -Path ($whrMskd.Text + "Office365Group.csv") -NoTypeInformation
-    }
+    process {
+        # export dl
+        if ($dlChkbox.Checked -eq $true) {
+            Get-DistributionGroup -ResultSize unlimited | Select-Object DisplayName, EmailAddresses | Export-Csv -Path ($whrMskd.Text + "distribution.csv") -NoTypeInformation
+            $statusLbl.Text = "Files generated"
+        }
 
-    # export mailenabled group
-    if ($mailChkbox.Checked -eq $true) {
-        Get-MsolGroup -MaxResults 1000 | Where-Object { $_.LastDirSyncTime -ne "" -and $_.GroupType -eq "Security" } | Select-Object DisplayName | export-csv -Path ($whrMskd.Text + "SyncedSecurity.csv") -NoTypeInformation
-    }
+        # export security group
+        if ($securityChkbox.Checked -eq $true) {
+            Get-MsolGroup -MaxResults 1000 | Where-Object { $_.GroupType -eq "Security" } | Select-Object DisplayName | Export-Csv -Path ($whrMskd.Text + "SecurityGroup.csv") -NoTypeInformation
+            $statusLbl.Text = "Files generated"
+        }
 
-    # export DDG
-    if ($ddgChkbox.Checked -eq $true) {
-        Get-DynamicDistributionGroup -ResultSize unlimited | Select-Object DisplayName, EmailAddresses | Export-Csv -Path ($whrMskd.Text + "DDG.csv") -NoTypeInformation
-    }
+        # export office365 group
+        if ($officeChkbox.Checked -eq $true) {
+            Get-UnifiedGroup -ResultSize unlimited | Select-Object DisplayName, PrimarySmtpAddress | export-csv -Path ($whrMskd.Text + "Office365Group.csv") -NoTypeInformation
+            $statusLbl.Text = "Files generated"
+        }
 
-    $statusLbl = "Generated!"
+        # export mailenabled group
+        if ($mailChkbox.Checked -eq $true) {
+            Get-MsolGroup -MaxResults 1000 | Where-Object { $_.LastDirSyncTime -ne "" -and $_.GroupType -eq "Security" } | Select-Object DisplayName | export-csv -Path ($whrMskd.Text + "SyncedSecurity.csv") -NoTypeInformation
+            $statusLbl.Text = "Files generated"
+        }
+
+        # export DDG
+        if ($ddgChkbox.Checked -eq $true) {
+            Get-DynamicDistributionGroup -ResultSize unlimited | Select-Object DisplayName, EmailAddresses | Export-Csv -Path ($whrMskd.Text + "DDG.csv") -NoTypeInformation
+            $statusLbl.Text = "Files generated"
+        }
+    }
 }
 
 <#
@@ -209,7 +227,7 @@ function export-data {
 
 
 $aboutBtn.Add_Click( {
-        # event showing message box in screen
+        # event showing message box on screen
         show-messagebox
     })
 
