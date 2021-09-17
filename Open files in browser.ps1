@@ -1,4 +1,4 @@
-﻿$TenantURL =  "https://zariii.sharepoint.com/"
+﻿$TenantURL =  "https://xxxxx.sharepoint.com/"
 $Credential = Get-Credential
 Connect-PnPOnline -Url $TenantURL -Credentials $Credential
 $site = Get-PnPTenantSite -Filter "Url -like '$TenantURL' -and Url -notlike 'portals/hub'"
