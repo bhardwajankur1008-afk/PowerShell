@@ -3,12 +3,12 @@
 
 # To replace licenses on specific users, please keep them in CSV file and update the file path in below line.
 $users = Import-Csv -Path C:\Users\ankurb\Desktop\user.csv
-[string]$standard = "RBLFinServe:O365_BUSINESS_PREMIUM"
-[string]$basic = "RBLFinServe:O365_BUSINESS_ESSENTIALS"
-[string]$kiosk = "RBLFinServe:EXCHANGEDESKLESS"
-[string]$e3 = "M365x770187:ENTERPRISEPACK"
-[string]$e1 = "RBLFinServe:STANDARDPACK"
-[string]$e5 = "M365x770187:ENTERPRISEPREMIUM"
+[string]$standard = "xxxx:O365_BUSINESS_PREMIUM"
+[string]$basic = "xxxx:O365_BUSINESS_ESSENTIALS"
+[string]$kiosk = "xxxx:EXCHANGEDESKLESS"
+[string]$e3 = "xxxx:ENTERPRISEPACK"
+[string]$e1 = "xxxx:STANDARDPACK"
+[string]$e5 = "xxxx:ENTERPRISEPREMIUM"
  
 Foreach($u in $users){
     
