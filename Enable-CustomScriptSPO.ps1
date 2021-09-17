@@ -1,4 +1,4 @@
-﻿$TenantURL =  "https://zariii.sharepoint.com/"
+﻿$TenantURL =  "https://xxxxxx.sharepoint.com/"
 
 #Get Credentials to connect
 $Credential = Get-Credential
