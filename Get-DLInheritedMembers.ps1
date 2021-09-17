@@ -1,5 +1,5 @@
 ﻿$count = 0
-$group = "dll@ZARI.PUBLICVM.COM"
+$group = "xxxxxx.PUBLICVM.COM"
 $directMember = Get-DistributionGroupMember -Identity $group | select Name, RecipientType
 Write-Host "Direct members count:"$directMember.Count -F Cyan
 Write-Output $directMember.Name
