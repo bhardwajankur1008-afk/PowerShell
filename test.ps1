@@ -1,7 +1,7 @@
 function ConnectTo-AllService
 {
     #read-host -assecurestring | convertfrom-securestring | out-file C:\mysecurestring.txt
-    $username = "b.ankur@wicdata.site"
+    $username = "xxxxxxxxxxxxx.site"
     $password = Get-Content 'C:\New_folder\secure.txt' | ConvertTo-SecureString
     $cred = new-object -typename System.Management.Automation.PSCredential -argumentlist $username, $password
 
