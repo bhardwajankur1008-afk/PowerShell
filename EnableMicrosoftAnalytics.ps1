@@ -1,9 +1,9 @@
 ﻿
 $data = Import-Csv -Path D:\file.csv
 
-[string]$E1 = "zariii:SPE_E5"
-[string]$E3 = "zariii:SPE_E5"
-[string]$E5 = "zariii:SPE_E5"
+[string]$E1 = "xxxx:SPE_E5"
+[string]$E3 = "xxxx:SPE_E5"
+[string]$E5 = "xxxx:SPE_E5"
 
 $LO1 = New-MsolLicenseOptions -AccountSkuId $E1
 $LO2 = New-MsolLicenseOptions -AccountSkuId $E3
